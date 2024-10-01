@@ -43,7 +43,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "task_manager",
+    "django_bootstrap5",
 ]
+
+BOOTSTRAP5 = {
+    'include_jquery': False,
+    'css_url': 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css',
+    'js_url': 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js',
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
