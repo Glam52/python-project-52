@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if form.instance.pk %}Редактировать{% else %}Создать{% endif %} пользователя</title>
+</head>
+<body>
+    <h2>{% if form.instance.pk %}Редактировать{% else %}Создать{% endif %} пользователя</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Отображение полей формы -->
+        <button type="submit">Сохранить</button>
+    </form>
+    <a href="{% url 'user_list' %}">Отмена</a>
+</body>
+</html>
