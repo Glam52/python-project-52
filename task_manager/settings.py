@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'users'
 ]
 
+AUTH_USER_MODEL = 'users.User'
+
 BOOTSTRAP5 = {
     'include_jquery': False,
     'css_url': 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css',
