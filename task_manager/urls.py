@@ -21,7 +21,7 @@ from users.views import login_view, logout_view
 
 
 urlpatterns = [
-    path('', views.index),
+    path('', views.index, name='index'),
     path("admin/", admin.site.urls),
     path('users/', include('users.urls')),
     path('login/', login_view, name='login'),  # URL для страницы входа
