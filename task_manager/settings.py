@@ -45,8 +45,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "task_manager",
     "django_bootstrap5",
-    'users'
+    'users',
+    'crispy_forms',
 ]
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 AUTH_USER_MODEL = 'users.User'
 

@@ -11,7 +11,7 @@ def user_create(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])  # Хешируем пароль
             user.save()
-            messages.success(request, 'Пользователь успешно создан.')
+            messages.success(request, 'Пользователь успешно создан')
             return redirect('/login/')
     else:
         form = UserForm()
@@ -22,8 +22,11 @@ def user_update(request, pk):
     if request.method == 'POST':
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Пользователь успешно обновлен.')
+            user = form.save(commit=False)
+            if 'password' in form.cleaned_data and form.cleaned_data['password']:
+                user.set_password(form.cleaned_data['password'])  # Хешируем пароль при обновлении
+            user.save()
+            messages.success(request, 'Пользователь успешно обновлен')
             return redirect('user_list')
     else:
         form = UserForm(instance=user)
@@ -33,14 +36,13 @@ def user_delete(request, pk):
     user = get_object_or_404(User, pk=pk)
     if request.method == 'POST':
         user.delete()
-        messages.success(request, 'Пользователь успешно удалён.')
+        messages.success(request, 'Пользователь успешно удалён')
         return redirect('user_list')
     return render(request, 'users/user_confirm_delete.html', {'user': user})
 
 def user_list(request):
     users = User.objects.all()
     return render(request, 'users/user_list.html', {'users': users})
-
 
 def login_view(request):
     if request.method == 'POST':
@@ -49,16 +51,13 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            messages.success(request, 'Вы залогинены.')
+            messages.success(request, 'Вы залогинены')
             return redirect('index')  # Убедитесь, что это имя соответствует маршруту
         else:
-            messages.error(request, 'Пожалуйста, введите правильные имя пользователя и пароль.')
+            messages.error(request, 'Пожалуйста, введите правильные имя пользователя и пароль')
     return render(request, 'users/login.html')
-
-
 
 def logout_view(request):
     logout(request)
-    messages.success(request, 'Вы вышли из системы.')
+    messages.success(request, 'Вы вышли из системы')
     return redirect('login')  # Перенаправление на страницу входа
-
