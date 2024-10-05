@@ -4,17 +4,19 @@ from .forms import UserForm
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
 
+
 def user_create(request):
     if request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])  # Хешируем пароль
-            user.save()
+            user.set_password(form.cleaned_data['password1'])  # Исправлено
+            user.save()  # Сохраняем пользователя в БД
             messages.success(request, 'Пользователь успешно создан')
             return redirect('/login/')
     else:
         form = UserForm()
+
     return render(request, 'users/user_form.html', {'form': form})
 
 def user_update(request, pk):
@@ -23,14 +25,18 @@ def user_update(request, pk):
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
             user = form.save(commit=False)
-            if 'password' in form.cleaned_data and form.cleaned_data['password']:
-                user.set_password(form.cleaned_data['password'])  # Хешируем пароль при обновлении
+            # Проверка на изменение пароля
+            password1 = form.cleaned_data.get('password1')
+            password_confirm = form.cleaned_data.get('password_confirm')
+            if password1 and password1 == password_confirm:
+                user.set_password(password1)  # Устанавливаем новый пароль
             user.save()
             messages.success(request, 'Пользователь успешно обновлен')
             return redirect('user_list')
     else:
         form = UserForm(instance=user)
-    return render(request, 'users/user_form.html', {'form': form})
+
+    return render(request, 'users/user_update_form.html', {'form': form})
 
 def user_delete(request, pk):
     user = get_object_or_404(User, pk=pk)

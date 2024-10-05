@@ -28,33 +28,33 @@
         </div>
     </nav>
     <div class="container wrapper flex-grow-1">
-        <h1 class="my-4">Регистрация</h1>
+        <h1 class="my-4">Изменение пользователя</h1> <!-- Изменено на "Изменение пользователя" -->
         <form method="post">
             {% csrf_token %}
             <div class="mb-3">
                 <label class="form-label" for="id_first_name">Имя</label>
-                <input type="text" name="first_name" maxlength="150" class="form-control" placeholder="Имя" required="" id="id_first_name">
+                <input type="text" name="first_name" maxlength="150" class="form-control" placeholder="Имя" required="" id="id_first_name" value="{{ form.first_name.value }}">
             </div>
             <div class="mb-3">
                 <label class="form-label" for="id_last_name">Фамилия</label>
-                <input type="text" name="last_name" maxlength="150" class="form-control" placeholder="Фамилия" required="" id="id_last_name">
+                <input type="text" name="last_name" maxlength="150" class="form-control" placeholder="Фамилия" required="" id="id_last_name" value="{{ form.last_name.value }}">
             </div>
             <div class="mb-3">
                 <label class="form-label" for="id_username">Имя пользователя</label>
-                <input type="text" name="username" maxlength="150" autofocus="" class="form-control" placeholder="Имя пользователя" required="" aria-describedby="id_username_helptext" id="id_username">
+                <input type="text" name="username" maxlength="150" autofocus="" class="form-control" placeholder="Имя пользователя" required="" aria-describedby="id_username_helptext" id="id_username" value="{{ form.username.value }}">
                 <div class="form-text">Обязательное поле. Не более 150 символов. Только буквы, цифры и символы @/./+/-/_.</div>
             </div>
             <div class="mb-3">
-                <label class="form-labe,l" for="id_password">Пароль</label>
+                <label class="form-label" for="id_password">Пароль</label>
                 <input type="password" name="password1" autocomplete="new-password" class="form-control" placeholder="Пароль" required="" aria-describedby="id_password1_helptext" id="id_password1">
                 <div class="form-text">Ваш пароль должен содержать как минимум 3 символа.</div>
             </div>
             <div class="mb-3">
                 <label class="form-label" for="id_password_confirm">Подтверждение пароля</label>
-               <input type="password" name="password_confirm" autocomplete="new-password" class="form-control" placeholder="Подтверждение пароля" required="" id="id_password_confirm">
+                <input type="password" name="password_confirm" autocomplete="new-password" class="form-control" placeholder="Подтверждение пароля" required="" id="id_password_confirm">
                 <div class="form-text">Для подтверждения введите, пожалуйста, пароль ещё раз.</div>
             </div>
-            <input class="btn btn-primary" type="submit" value="Зарегистрировать">
+            <input class="btn btn-primary" type="submit" value="Изменить"> <!-- Изменено на "Изменить" -->
         </form>
     </div>
     <footer>
