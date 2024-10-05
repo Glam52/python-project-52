@@ -65,5 +65,5 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    messages.success(request, 'Вы вышли из системы')
-    return redirect('login')  # Перенаправление на страницу входа
+    messages.success(request, 'Вы разлогинены')
+    return redirect('index')  # Перенаправление на страницу входа
