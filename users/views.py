@@ -10,7 +10,7 @@ def user_create(request):
         form = UserForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password1'])  # Исправлено
+            user.set_password(form.cleaned_data['password1'])  # Установить пароль
             user.save()  # Сохраняем пользователя в БД
             messages.success(request, 'Пользователь успешно создан')
             return redirect('/login/')
@@ -21,6 +21,12 @@ def user_create(request):
 
 def user_update(request, pk):
     user = get_object_or_404(User, pk=pk)
+
+    # Проверка, является ли текущий пользователь владельцем аккаунта
+    if request.user != user:
+        messages.error(request, 'У вас нет прав для изменения другого пользователя.')
+        return redirect('user_list')
+
     if request.method == 'POST':
         form = UserForm(request.POST, instance=user)
         if form.is_valid():
@@ -40,6 +46,11 @@ def user_update(request, pk):
 
 def user_delete(request, pk):
     user = get_object_or_404(User, pk=pk)
+    # Проверка, является ли текущий пользователь владельцем аккаунта
+    if request.user != user:
+        messages.error(request, 'У вас нет прав для удаления другого пользователя.')
+        return redirect('user_list')
+
     if request.method == 'POST':
         user.delete()
         messages.success(request, 'Пользователь успешно удалён')
