@@ -26,4 +26,5 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('login/', login_view, name='login'),  # URL для страницы входа
     path('logout/', logout_view, name='logout'),
+    path('statuses/', include('statuses.urls')),
 ]

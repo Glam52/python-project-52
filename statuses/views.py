@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Status
-from django.http import HttpResponse
 from django.views import View
 from .forms import StatusForm
+from django.contrib import messages
 
 class StatusListView(View):
     def get(self, request):
@@ -18,6 +18,7 @@ class StatusCreateView(View):
         form = StatusForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Статус успешно создан')
             return redirect('statuses:list')
         return render(request, 'statuses/status_form.html', {'form': form})
 
@@ -25,15 +26,16 @@ class StatusUpdateView(View):
     def get(self, request, pk):
         status = get_object_or_404(Status, pk=pk)
         form = StatusForm(instance=status)
-        return render(request, 'statuses/status_form.html', {'form': form})
+        return render(request, 'statuses/status_update.html', {'form': form})
 
     def post(self, request, pk):
         status = get_object_or_404(Status, pk=pk)
         form = StatusForm(request.POST, instance=status)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Статус успешно изменен')
             return redirect('statuses:list')
-        return render(request, 'statuses/status_form.html', {'form': form})
+        return render(request, 'statuses/status_update.html', {'form': form})
 
 class StatusDeleteView(View):
     def get(self, request, pk):
