@@ -3,11 +3,21 @@ from .models import Status
 from django.views import View
 from .forms import StatusForm
 from django.contrib import messages
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+
 
 class StatusListView(View):
+    @method_decorator(login_required)
     def get(self, request):
         statuses = Status.objects.all()
         return render(request, 'statuses/status_list.html', {'statuses': statuses})
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            messages.error(request, 'Вы не авторизованы! Пожалуйста, выполните вход.')
+            return redirect('login')  # Замените 'login' на имя вашего URL для входа
+        return super().dispatch(request, *args, **kwargs)
 
 class StatusCreateView(View):
     def get(self, request):
@@ -45,5 +55,6 @@ class StatusDeleteView(View):
     def post(self, request, pk):
         status = get_object_or_404(Status, pk=pk)
         status.delete()
+        messages.success(request, 'Статус успешно удален')
         return redirect('statuses:list')
 
