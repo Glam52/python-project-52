@@ -11,6 +11,21 @@ def task_list(request):
     statuses = Status.objects.all()
     executors = User.objects.all()
     tasks = Task.objects.all()  # Получение всех задач
+
+    # Фильтрация по статусу
+    status_id = request.GET.get('status')
+    if status_id:
+        tasks = tasks.filter(status_id=status_id)
+
+    # Фильтрация по исполнителю
+    executor_id = request.GET.get('executor')
+    if executor_id:
+        tasks = tasks.filter(executor_id=executor_id)
+
+    # Фильтрация только по собственным задачам
+    if request.GET.get('self_tasks'):
+        tasks = tasks.filter(author=request.user)
+
     return render(request, 'tasks/task_list.html', {
         'statuses': statuses,
         'executors': executors,
@@ -41,25 +56,25 @@ def task_create(request):
 
 @login_required
 def task_update(request, pk):
-    task = get_object_or_404(Task, pk=pk)
-
-    statuses = Status.objects.all()  # Получение всех статусов
-    executors = User.objects.all()  # Получение всех исполнителей
+    task = get_object_or_404(Task, pk=pk)  # Получаем задачу по первичному ключу
+    statuses = Status.objects.all()  # Получаем все статусы
+    executors = User.objects.all()  # Получаем всех пользователей
 
     if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)
+        form = TaskForm(request.POST, instance=task)  # Заполняем форму данными существующей задачи
         if form.is_valid():
-            form.save()
+            form.save()  # Сохраняем изменения
             messages.success(request, 'Задача успешно изменена')
             return redirect('task_list')
     else:
-        form = TaskForm(instance=task)
+        form = TaskForm(instance=task)  # Заполняем форму существующей задачей при GET-запросе
 
     return render(request, 'tasks/task_update.html', {
         'form': form,
-        'statuses': statuses,  # Передача статусов в контекст
-        'executors': executors,  # Передача исполнителей в контекст
+        'statuses': statuses,
+        'executors': executors,
     })
+
 
 
 @login_required
