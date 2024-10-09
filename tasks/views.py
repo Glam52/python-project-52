@@ -18,6 +18,8 @@ def task_list(request):
 
 @login_required
 def task_create(request):
+    statuses = Status.objects.all()
+    executors = User.objects.all()
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
@@ -27,7 +29,11 @@ def task_create(request):
             return redirect('task_list')
     else:
         form = TaskForm()
-    return render(request, 'tasks/task_form.html', {'form': form})
+    return render(request, 'tasks/task_form.html', {
+        'form': form,
+        'statuses': statuses,  # Убедитесь, что это передается
+        'executors': executors,  # И это тоже
+    })
 
 @login_required
 def task_update(request, pk):

@@ -7,6 +7,7 @@ from .views import (
     task_detail,
 )
 
+
 urlpatterns = [
     path('', task_list, name='task_list'),
     path('create/', task_create, name='task_create'),
