@@ -5,6 +5,7 @@ from .forms import StatusForm
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from tasks.models import Task
 
 
 class StatusListView(View):
@@ -54,7 +55,14 @@ class StatusDeleteView(View):
 
     def post(self, request, pk):
         status = get_object_or_404(Status, pk=pk)
+
+        # Проверяем, используется ли статус в задачах
+        if Task.objects.filter(status=status).exists():
+            messages.error(request, 'Невозможно удалить статус, потому что он используется в задачах.')
+            return redirect('statuses:list')  # Замените 'statuses:list' на ваше имя URL для списка статусов
+
         status.delete()
         messages.success(request, 'Статус успешно удален')
         return redirect('statuses:list')
+
 
