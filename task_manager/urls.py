@@ -27,4 +27,5 @@ urlpatterns = [
     path('login/', login_view, name='login'),  # URL для страницы входа
     path('logout/', logout_view, name='logout'),
     path('statuses/', include('statuses.urls')),
+    path('tasks/', include('tasks.urls')),
 ]
