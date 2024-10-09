@@ -1,12 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Task
+from users.models import User
+from statuses.models import Status
 from .forms import TaskForm
+
 
 @login_required
 def task_list(request):
+    statuses = Status.objects.all()
+    executors = User.objects.all()
     tasks = Task.objects.all()
-    return render(request, 'tasks/task_list.html', {'tasks': tasks})
+    return render(request, 'tasks/task_list.html', {
+        'statuses': statuses,
+        'executors': executors,
+    })
 
 @login_required
 def task_create(request):
