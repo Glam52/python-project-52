@@ -34,6 +34,16 @@
     </nav>
 
     <div class="container wrapper flex-grow-1">
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
         <h1 class="my-4">Задачи</h1>
         <a class="btn btn-primary mb-3" href="/tasks/create/" role="button">Создать задачу</a>
 
@@ -53,9 +63,11 @@
                         <label class="form-label" for="id_executor">Исполнитель</label>
                         <select name="executor" class="form-select mr-3 ml-2" id="id_executor">
                             <option value="" selected="">---------</option>
-                            {% for executor in executors %}
-                                <option value="{{ executor.id }}">{{ executor.name }}</option>
-                            {% endfor %}
+                        {% for executor in executors %}
+                            <option value="{{ executor.id }}">
+                                {{ executor.first_name }} {{ executor.last_name }}
+                            </option>
+                        {% endfor %}
                         </select>
                     </div>
                     <div class="mb-3">
@@ -98,8 +110,8 @@
                             <a href="/tasks/{{ task.id }}/">{{ task.name }}</a>
                         </td>
                         <td>{{ task.status.name }}</td>
-                        <td>{{ task.author.username }}</td>
-                        <td>{{ task.executor.username }}</td>
+                        <td>{{ task.author.first_name }} {{task.author.last_name}}</td>
+                        <td>{{ task.executor.first_name }} {{ task.executor.last_name }}</td>
                         <td>{{ task.created_at|date:"d.m.Y H:i" }}</td>
                         <td>
                             <a href="/tasks/{{ task.id }}/update/">Изменить</a>
