@@ -99,11 +99,9 @@ TEMPLATES = [
 WSGI_APPLICATION = "task_manager.wsgi.application"
 
 import environ
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-env = environ.Env()
-environ.Env.read_env()
 
+env = environ.Env()
+environ.Env.read_env()  # Чтение файла .env
 
 DATABASES = {
     'default': {
