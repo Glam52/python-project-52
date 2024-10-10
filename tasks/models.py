@@ -10,6 +10,7 @@ class Task(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tasks')
     executor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='assigned_tasks')
     created_at = models.DateTimeField(auto_now_add=True)
+    labels = models.ManyToManyField('labels.Label')
 
     def __str__(self):
         return self.name
