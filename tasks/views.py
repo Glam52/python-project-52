@@ -1,113 +1,99 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.views import View
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.urls import reverse_lazy
+from django.contrib import messages
 from .models import Task
 from users.models import User
 from statuses.models import Status
-from .forms import TaskForm
-from django.contrib import messages
 from labels.models import Label
-
-@login_required
-def task_list(request):
-    statuses = Status.objects.all()
-    executors = User.objects.all()
-    tasks = Task.objects.all()  # Получение всех задач
-
-    # Фильтрация по статусу
-    status_id = request.GET.get('status')
-    if status_id:
-        tasks = tasks.filter(status_id=status_id)
-
-    # Фильтрация по исполнителю
-    executor_id = request.GET.get('executor')
-    if executor_id:
-        tasks = tasks.filter(executor_id=executor_id)
-
-    # Фильтрация только по собственным задачам
-    if request.GET.get('self_tasks'):
-        tasks = tasks.filter(author=request.user)
-
-    return render(request, 'tasks/task_list.html', {
-        'statuses': statuses,
-        'executors': executors,
-        'tasks': tasks,  # Передача задач в контекст
-    })
+from .forms import TaskForm
 
 
-@login_required
-def task_create(request):
-    statuses = Status.objects.all()
-    executors = User.objects.all()
-    labels = Label.objects.all()  # Получаем все метки
+class TaskListView(ListView):
+    model = Task
+    template_name = 'tasks/task_list.html'
+    context_object_name = 'tasks'
 
-    if request.method == 'POST':
-        form = TaskForm(request.POST)
-        if form.is_valid():
-            task = form.save(commit=False)
-            task.author = request.user
-            task.save()
-            form.save_m2m()  # Сохраняем связи ManyToMany
-            messages.success(request, 'Задача успешно создана')
-            return redirect('task_list')
-    else:
-        form = TaskForm()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['statuses'] = Status.objects.all()
+        context['executors'] = User.objects.all()
+        context['labels'] = Label.objects.all()
+        status_id = self.request.GET.get('status')
+        executor_id = self.request.GET.get('executor')
+        label_id = self.request.GET.get('label')
 
-    return render(request, 'tasks/task_form.html', {
-        'form': form,
-        'statuses': statuses,
-        'executors': executors,
-        'labels': labels,  # Передаем метки в контекст
-    })
+        if status_id:
+            context['tasks'] = context['tasks'].filter(status_id=status_id)
+        if executor_id:
+            context['tasks'] = context['tasks'].filter(executor_id=executor_id)
+        if label_id:  # Фильтрация по меткам
+            context['tasks'] = context['tasks'].filter(labels__id=label_id)
+        if self.request.GET.get('self_tasks'):
+            context['tasks'] = context['tasks'].filter(author=self.request.user)
 
-
-
-@login_required
-def task_update(request, pk):
-    task = get_object_or_404(Task, pk=pk)
-    statuses = Status.objects.all()
-    executors = User.objects.all()
-    labels = Label.objects.all()  # Получаем все метки
-
-    if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)
-        if form.is_valid():
-            form.save()
-            form.save_m2m()
-            messages.success(request, 'Задача успешно изменена')
-            return redirect('task_list')
-    else:
-        form = TaskForm(instance=task)
-
-    return render(request, 'tasks/task_update.html', {
-        'form': form,
-        'statuses': statuses,
-        'executors': executors,
-        'labels': labels,  # Передаем метки в контекст
-    })
+        return context
 
 
+class TaskCreateView(CreateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'tasks/task_form.html'
+    success_url = reverse_lazy('task_list')
 
-@login_required
-def task_delete(request, pk):
-    task = get_object_or_404(Task, pk=pk)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['statuses'] = Status.objects.all()
+        context['executors'] = User.objects.all()
+        context['labels'] = Label.objects.all()
+        return context
 
-    if request.user != task.author:
-        messages.error(request, "Задачу может удалить только ее автор.")
-        return redirect('task_list')  # Перенаправляем на страницу списка задач
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        messages.success(self.request, 'Задача успешно создана')
+        return super().form_valid(form)
 
-    if request.method == 'POST':
-        task.delete()
-        messages.success(request, "Задача была успешно удалена.")
-        return redirect('task_list')
 
-    return render(request, 'tasks/task_confirm_delete.html', {'task': task})
-@login_required
-def task_detail(request, pk):
-    task = get_object_or_404(Task, pk=pk)
-    # Предполагается, что у вас есть связь ManyToMany с метками
-    labels = task.labels.all()  # Получаем метки, связанные с данной задачей
+class TaskUpdateView(UpdateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'tasks/task_update.html'
+    success_url = reverse_lazy('task_list')
 
-    return render(request, 'tasks/task_detail.html', {
-        'task': task,
-        'labels': labels,  # Передаем метки в контекст
-    })
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['statuses'] = Status.objects.all()
+        context['executors'] = User.objects.all()
+        context['labels'] = Label.objects.all()
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Задача успешно изменена')
+        return super().form_valid(form)
+
+
+class TaskDeleteView(DeleteView):
+    model = Task
+    template_name = 'tasks/task_confirm_delete.html'
+    success_url = reverse_lazy('task_list')
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if self.request.user != obj.author:
+            messages.error(self.request, "Задачу может удалить только ее автор.")
+            # Redirect to the task list
+            self.success_url = reverse_lazy('task_list')
+        return obj
+
+
+class TaskDetailView(DetailView):
+    model = Task
+    template_name = 'tasks/task_detail.html'
+    context_object_name = 'task'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['labels'] = self.object.labels.all()
+        return context

@@ -48,16 +48,16 @@
 </nav>
 
     <div class="container wrapper flex-grow-1">
-        {% if messages %}
-            {% for message in messages %}
-                {% if message.tags %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endif %}
-            {% endfor %}
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         {% endif %}
+    {% endfor %}
+{% endif %}
         <h1 class="my-4">Задачи</h1>
         <a class="btn btn-primary mb-3" href="/tasks/create/" role="button">Создать задачу</a>
 
