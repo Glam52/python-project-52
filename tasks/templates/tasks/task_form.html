@@ -81,8 +81,11 @@
             <div class="mb-3">
                 <label class="form-label" for="id_labels">Метки</label>
                 <select name="labels" class="form-select" id="id_labels" multiple="">
-                    <option value="1">Метка 1</option>
-                    <option value="2">Метка 2</option>
+                    {% for label in labels %}
+                        <option value="{{ label.id }}">
+                            {{ label.name }}
+                        </option>
+                    {% endfor %}
                 </select>
             </div>
             <input class="btn btn-primary" type="submit" value="Создать">

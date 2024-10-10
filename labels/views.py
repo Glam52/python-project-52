@@ -3,7 +3,7 @@ from .models import Label
 from .forms import LabelForm
 from django.urls import reverse_lazy
 from django.contrib import messages
-
+from django.shortcuts import redirect
 
 class LabelListView(ListView):
     model = Label
@@ -36,7 +36,14 @@ class LabelDeleteView(DeleteView):
     success_url = reverse_lazy('labels:label_list')
 
     def post(self, request, *args, **kwargs):
-        # Сначала, возможно, сохраните метку
         self.object = self.get_object()
+
+        # Проверка на наличие связанных задач
+        if self.object.task_set.exists():  # task_set используется для обратной связи через ManyToMany
+            messages.error(request, 'Невозможно удалить метку, потому что она используется')
+            return redirect(self.success_url)
+
+        # Удаляем метку, если она не используется
         messages.success(request, 'Метка успешно удалена')
         return self.delete(request, *args, **kwargs)
+

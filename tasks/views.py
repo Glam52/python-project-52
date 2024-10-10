@@ -5,6 +5,7 @@ from users.models import User
 from statuses.models import Status
 from .forms import TaskForm
 from django.contrib import messages
+from labels.models import Label
 
 @login_required
 def task_list(request):
@@ -37,42 +38,51 @@ def task_list(request):
 def task_create(request):
     statuses = Status.objects.all()
     executors = User.objects.all()
+    labels = Label.objects.all()  # Получаем все метки
+
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
             task = form.save(commit=False)
             task.author = request.user
             task.save()
+            form.save_m2m()  # Сохраняем связи ManyToMany
             messages.success(request, 'Задача успешно создана')
             return redirect('task_list')
     else:
         form = TaskForm()
+
     return render(request, 'tasks/task_form.html', {
         'form': form,
-        'statuses': statuses,  # Убедитесь, что это передается
-        'executors': executors,  # И это тоже
+        'statuses': statuses,
+        'executors': executors,
+        'labels': labels,  # Передаем метки в контекст
     })
+
 
 
 @login_required
 def task_update(request, pk):
-    task = get_object_or_404(Task, pk=pk)  # Получаем задачу по первичному ключу
-    statuses = Status.objects.all()  # Получаем все статусы
-    executors = User.objects.all()  # Получаем всех пользователей
+    task = get_object_or_404(Task, pk=pk)
+    statuses = Status.objects.all()
+    executors = User.objects.all()
+    labels = Label.objects.all()  # Получаем все метки
 
     if request.method == 'POST':
-        form = TaskForm(request.POST, instance=task)  # Заполняем форму данными существующей задачи
+        form = TaskForm(request.POST, instance=task)
         if form.is_valid():
-            form.save()  # Сохраняем изменения
+            form.save()
+            form.save_m2m()
             messages.success(request, 'Задача успешно изменена')
             return redirect('task_list')
     else:
-        form = TaskForm(instance=task)  # Заполняем форму существующей задачей при GET-запросе
+        form = TaskForm(instance=task)
 
     return render(request, 'tasks/task_update.html', {
         'form': form,
         'statuses': statuses,
         'executors': executors,
+        'labels': labels,  # Передаем метки в контекст
     })
 
 
@@ -94,4 +104,10 @@ def task_delete(request, pk):
 @login_required
 def task_detail(request, pk):
     task = get_object_or_404(Task, pk=pk)
-    return render(request, 'tasks/task_detail.html', {'task': task})
+    # Предполагается, что у вас есть связь ManyToMany с метками
+    labels = task.labels.all()  # Получаем метки, связанные с данной задачей
+
+    return render(request, 'tasks/task_detail.html', {
+        'task': task,
+        'labels': labels,  # Передаем метки в контекст
+    })

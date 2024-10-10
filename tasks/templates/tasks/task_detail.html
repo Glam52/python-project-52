@@ -79,16 +79,17 @@
         <div class="col">Дата создания</div>
         <div class="col">{{ task.created_at|date:"d.m.Y H:i" }}</div>
       </div>
-      <div class="row p-1">
-        <div class="col">
-          <h6>Метки:</h6>
-          <ul>
-            {% for tag in task.tags.all %}
-              <li>{{ tag.name }}</li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
+        <div class="row p-1">
+            <div class="col">
+                <h6>Метки:</h6>
+                <ul>
+                    {% for label in labels %}
+                        <li>{{ label.name }}</li>
+                    {% empty %}
+                        <li>Нет меток</li>  <!-- Сообщение на случай, если меток нет -->
+                    {% endfor %}
+                </ul>
+            </div>
       <div class="row p-1">
         <div class="col">
           <a href="{% url 'task_update' task.id %}">Изменить</a>
