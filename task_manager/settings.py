@@ -107,7 +107,6 @@ environ.Env.read_env()  # Чтение файла .env
 
 # Получаем значение DATABASE_URL из переменной окружения
 DATABASE_URL = env('DATABASE_URL')
-
 # Конфигурация базы данных
 DATABASES = {
     'default': dj_database_url.config(default=DATABASE_URL)
