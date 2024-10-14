@@ -12,7 +12,7 @@ def user_create(request):
             user = form.save(commit=False)
             user.set_password(form.cleaned_data["password1"])
             user.save()  # Сохраняем пользователя в БД
-            messages.success(request, "Пользователь успешно создан")
+            messages.success(request, "Пользователь успешно зарегистрирован")
             return redirect("/login/")
     else:
         form = UserForm()
