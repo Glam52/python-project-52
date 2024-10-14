@@ -39,7 +39,7 @@ def user_update(request, pk):
             if password1 and password1 == password_confirm:
                 user.set_password(password1)  # Устанавливаем новый пароль
             user.save()
-            messages.success(request, "Пользователь успешно обновлен")
+            messages.success(request, "Пользователь успешно изменен")
             return redirect("user_list")
     else:
         form = UserForm(instance=user)
@@ -57,7 +57,7 @@ def user_delete(request, pk):
 
     if request.method == "POST":
         user.delete()
-        messages.success(request, "Пользователь успешно удалён")
+        messages.success(request, "Пользователь успешно удален")
         return redirect("user_list")
     return render(request, "users/user_confirm_delete.html", {"user": user})
 
