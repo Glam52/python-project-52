@@ -35,7 +35,7 @@ def user_update(request, pk):
             user = form.save(commit=False)
             # Проверка на изменение пароля
             password1 = form.cleaned_data.get("password1")
-            password_confirm = form.cleaned_data.get("password_confirm")
+            password_confirm = form.cleaned_data.get("password2")
             if password1 and password1 == password_confirm:
                 user.set_password(password1)  # Устанавливаем новый пароль
             user.save()
