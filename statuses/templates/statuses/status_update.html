@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ru-ru">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -46,20 +47,18 @@
     </div>
 </nav>
     <div class="container wrapper flex-grow-1">
-
-
-
       <h1 class="my-4">
-
-Изменение статуса
-
+          Изменение статуса
       </h1>
 
-<form method="post">
-  {% csrf_token %}
-  <div class="mb-3"><label class="form-label" for="id_name">Имя</label><input type="text" name="name" maxlength="100" class="form-control" placeholder="Имя" required="" id="id_name"></div>
-    <input class="btn btn-primary" type="submit" value="Изменить">
-</form>
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+          <label class="form-label" for="id_name">Имя</label>
+          <input type="text" name="name" maxlength="100" class="form-control" placeholder="Имя" required="" id="id_name" value="{{ form.instance.name }}">
+      </div>
+        <input class="btn btn-primary" type="submit" value="Изменить">
+    </form>
 
     </div>
     <footer>
@@ -68,5 +67,5 @@
       </div>
     </footer>
 
-
-</body></html>
+</body>
+</html>
