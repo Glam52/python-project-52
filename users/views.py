@@ -52,7 +52,7 @@ def user_delete(request, pk):
     # Проверка, является ли текущий пользователь владельцем аккаунта
     if request.user != user:
         messages.error(request,
-                       "У вас нет прав для удаления другого пользователя.")
+                       "У вас нет прав для изменения другого пользователя.")
         return redirect("user_list")
 
     if request.method == "POST":
