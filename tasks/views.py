@@ -111,7 +111,7 @@ class TaskDeleteView(DeleteView):
             request, *args, **kwargs
         )  # Позволяем отобразить страницу подтверждения удаления
 
-    def get_object(self, queryset: Any=None) -> Task:
+    def get_object(self, queryset: Any = None) -> Task:
         return super().get_object(queryset)
 
 
