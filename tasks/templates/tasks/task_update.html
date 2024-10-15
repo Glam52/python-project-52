@@ -75,13 +75,10 @@
             <label class="form-label" for="id_executor">Исполнитель</label>
             <select name="executor" class="form-select" id="id_executor">
                 <option value="" selected="">---------</option>
-                    {% for executor in executors %}
-                        <option value="{{ executor.id }}" {% if executor.id == form.instance.executor.id %}selected{% endif %}>
-                            {{executor.first_name}} {{executor.last_name}}
-                        </option>
-                    {% endfor %}
-                </select>
-
+                {% for executor in executors %}
+                    <option value="{{ executor.id }}" {% if executor.id == form.instance.executor.id %}selected{% endif %}>{{ executor.first_name }} {{ executor.last_name }}</option>
+                {% endfor %}
+            </select>
         </div>
 
         <div class="mb-3">
