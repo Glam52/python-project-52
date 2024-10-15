@@ -67,7 +67,8 @@ class UserTests(TestCase):
             "password1": "NewPassword123",
             "password2": "DifferentPassword123",
         }
-        response_invalid = self.client.post(reverse("user_update", args=[self.user.pk]), invalid_data)
+        response_invalid = self.client.post(reverse("user_update",
+                                                    args=[self.user.pk]), invalid_data)
 
         # Ожидаем 200, если данные неверные
         self.assertEqual(response_invalid.status_code, 200)

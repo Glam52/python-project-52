@@ -71,9 +71,6 @@ class TaskTests(TestCase):
         self.assertRedirects(response, reverse("task_list"))
 
     def test_task_delete_unauthorized(self):
-        unauthorized_user = User.objects.create_user(
-            username="unauthorized", password="12345"
-        )
         self.client.logout()
         self.client.login(username="unauthorized", password="12345")
 

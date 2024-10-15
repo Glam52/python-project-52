@@ -1,6 +1,7 @@
 from django import forms
 from .models import User
 
+
 class UserForm(forms.ModelForm):
     password1 = forms.CharField(
         widget=forms.PasswordInput, max_length=128, required=True

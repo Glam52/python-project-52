@@ -1,6 +1,6 @@
-import environ
 import dj_database_url
-from decouple import config
+import os
+from dotenv import load_dotenv
 """
 Django settings for task_manager project.
 
@@ -22,8 +22,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-import os
-from dotenv import load_dotenv
 
 load_dotenv()
 
