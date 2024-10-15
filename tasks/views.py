@@ -13,6 +13,8 @@ from statuses.models import Status
 from labels.models import Label
 from .forms import TaskForm
 from django.shortcuts import redirect
+from django.http import HttpRequest, HttpResponse
+from typing import Any, Dict
 
 
 class TaskListView(ListView):
@@ -20,7 +22,7 @@ class TaskListView(ListView):
     template_name = "tasks/task_list.html"
     context_object_name = "tasks"
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["statuses"] = Status.objects.all()
         context["executors"] = User.objects.all()
@@ -47,14 +49,14 @@ class TaskCreateView(CreateView):
     template_name = "tasks/task_form.html"
     success_url = reverse_lazy("task_list")
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["statuses"] = Status.objects.all()
         context["executors"] = User.objects.all()
         context["labels"] = Label.objects.all()
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form: TaskForm) -> HttpResponse:
         form.instance.author = self.request.user
         messages.success(self.request, "Задача успешно создана")
         return super().form_valid(form)
@@ -66,14 +68,14 @@ class TaskUpdateView(UpdateView):
     template_name = "tasks/task_update.html"
     success_url = reverse_lazy("task_list")
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["statuses"] = Status.objects.all()
         context["executors"] = User.objects.all()
         context["labels"] = Label.objects.all()
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form: TaskForm) -> HttpResponse:
         messages.success(self.request, "Задача успешно изменена")
         return super().form_valid(form)
 
@@ -83,7 +85,7 @@ class TaskDeleteView(DeleteView):
     template_name = "tasks/task_confirm_delete.html"
     success_url = reverse_lazy("task_list")
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         self.object = self.get_object()
 
         if self.request.user != self.object.author:
@@ -95,7 +97,7 @@ class TaskDeleteView(DeleteView):
         messages.success(self.request, "Задача успешно удалена")
         return redirect(self.success_url)  # Перенаправление на список задач
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         self.object = self.get_object()
 
         # Проверка авторства
@@ -109,7 +111,7 @@ class TaskDeleteView(DeleteView):
             request, *args, **kwargs
         )  # Позволяем отобразить страницу подтверждения удаления
 
-    def get_object(self, queryset=None):
+    def get_object(self, queryset: Any=None) -> Task:
         return super().get_object(queryset)
 
 
@@ -118,7 +120,7 @@ class TaskDetailView(DetailView):
     template_name = "tasks/task_detail.html"
     context_object_name = "task"
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["labels"] = self.object.labels.all()
         return context

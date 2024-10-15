@@ -1,15 +1,17 @@
+from django.http import HttpResponse, HttpRequest
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Label
 from .forms import LabelForm
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import redirect
+from typing import Any
 
 
 class LabelListView(ListView):
     model = Label
     template_name = "labels/label_list.html"
-    context_object_name = "labels"  # Добавлено для улучшения читаемости шаблона
+    context_object_name = "labels"
 
 
 class LabelCreateView(CreateView):
@@ -18,7 +20,7 @@ class LabelCreateView(CreateView):
     template_name = "labels/label_form.html"
     success_url = reverse_lazy("labels:label_list")
 
-    def form_valid(self, form):
+    def form_valid(self, form: LabelForm) -> HttpResponse:
         messages.success(self.request, "Метка успешно создана")
         return super().form_valid(form)
 
@@ -29,7 +31,7 @@ class LabelUpdateView(UpdateView):
     template_name = "labels/label_update.html"
     success_url = reverse_lazy("labels:label_list")
 
-    def form_valid(self, form):
+    def form_valid(self, form: LabelForm) -> HttpResponse:
         messages.success(self.request, "Метка успешно изменена")
         return super().form_valid(form)
 
@@ -39,7 +41,7 @@ class LabelDeleteView(DeleteView):
     template_name = "labels/label_confirm_delete.html"
     success_url = reverse_lazy("labels:label_list")
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         self.object = self.get_object()
 
         # Проверка на наличие связанных задач

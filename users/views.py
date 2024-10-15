@@ -3,9 +3,10 @@ from .models import User
 from .forms import UserForm
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
+from django.http import HttpRequest, HttpResponse
 
 
-def user_create(request):
+def user_create(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = UserForm(request.POST)
         if form.is_valid():
@@ -20,7 +21,7 @@ def user_create(request):
     return render(request, "users/user_form.html", {"form": form})
 
 
-def user_update(request, pk):
+def user_update(request: HttpRequest, pk: int) -> HttpResponse:
     user = get_object_or_404(User, pk=pk)
 
     # Проверка, является ли текущий пользователь владельцем аккаунта
@@ -47,7 +48,7 @@ def user_update(request, pk):
     return render(request, "users/user_update_form.html", {"form": form})
 
 
-def user_delete(request, pk):
+def user_delete(request: HttpRequest, pk: int) -> HttpResponse:
     user = get_object_or_404(User, pk=pk)
     # Проверка, является ли текущий пользователь владельцем аккаунта
     if request.user != user:
@@ -62,12 +63,12 @@ def user_delete(request, pk):
     return render(request, "users/user_confirm_delete.html", {"user": user})
 
 
-def user_list(request):
+def user_list(request: HttpRequest) -> HttpResponse:
     users = User.objects.all()
     return render(request, "users/user_list.html", {"users": users})
 
 
-def login_view(request):
+def login_view(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
         username = request.POST["username"]
         password = request.POST["password"]
@@ -84,7 +85,7 @@ def login_view(request):
     return render(request, "users/login.html")
 
 
-def logout_view(request):
+def logout_view(request: HttpRequest) -> HttpResponse:
     logout(request)
     messages.success(request, "Вы разлогинены")
     return redirect("index")  # Перенаправление на страницу входа
