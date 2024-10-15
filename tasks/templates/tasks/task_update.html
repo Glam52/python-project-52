@@ -83,15 +83,12 @@
 
         <div class="mb-3">
             <label class="form-label" for="id_labels">Метки</label>
-            <select name="labels" class="form-select" id="id_labels" multiple="">
+            <select name="labels" class="form-select" id="id_labels" multiple>
                 {% for label in labels %}
-                    <option value="{{ label.id }}">
-                        {{ label.name }}
-                    </option>
+                    <option value="{{ label.id }}" {% if label in form.instance.labels.all %}selected{% endif %}>{{ label.name }}</option>
                 {% endfor %}
             </select>
         </div>
-
         <input class="btn btn-primary" type="submit" value="Изменить">
 
     </form>
