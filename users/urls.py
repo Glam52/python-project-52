@@ -1,19 +1,18 @@
 from django.urls import path
 from .views import (
-    user_list,
-    user_create,
-    user_update,
-    user_delete,
-    login_view,
-    logout_view,
+    UserListView,
+    UserCreateView,
+    UserUpdateView,
+    UserDeleteView,
+    LoginView,
+    LogoutView,
 )
 
-
 urlpatterns = [
-    path("", user_list, name="user_list"),
-    path("create/", user_create, name="user_create"),
-    path("<int:pk>/update/", user_update, name="user_update"),
-    path("<int:pk>/delete/", user_delete, name="user_delete"),
-    path("login/", login_view, name="login"),  # Добавлен маршрут для login
-    path("logout/", logout_view, name="logout"),  # Добавлен маршрут для logout
+    path("", UserListView.as_view(), name="user_list"),
+    path("create/", UserCreateView.as_view(), name="user_create"),
+    path("<int:pk>/update/", UserUpdateView.as_view(), name="user_update"),
+    path("<int:pk>/delete/", UserDeleteView.as_view(), name="user_delete"),
+    path("login/", LoginView.as_view(), name="login"),
+    path("logout/", LogoutView.as_view(), name="logout"),
 ]

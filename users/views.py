@@ -1,75 +1,98 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import User
-from .forms import UserForm
-from django.contrib.auth import logout, authenticate, login
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import (
+    CreateView,
+    UpdateView,
+    DeleteView,
+    ListView,
+    TemplateView,
+)
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth import get_user_model, authenticate, login, logout
+from .forms import CustomUserCreationForm
 from django.contrib import messages
-from django.http import HttpRequest, HttpResponse
+
+User = get_user_model()
 
 
-def user_create(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
-        form = UserForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data["password1"])
-            user.save()  # Сохраняем пользователя в БД
-            messages.success(request, "Пользователь успешно зарегистрирован")
-            return redirect("/login/")
-    else:
-        form = UserForm()
+class UserCreateView(SuccessMessageMixin, CreateView):
+    model = User
+    form_class = CustomUserCreationForm
+    template_name = "users/user_form.html"
+    success_message = "Пользователь успешно зарегистрирован"
+    success_url = reverse_lazy("login")
 
-    return render(request, "users/user_form.html", {"form": form})
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        # Выводим ошибки формы в логах для отладки
+        print(form.errors)
+        return super().form_invalid(form)
 
 
-def user_update(request: HttpRequest, pk: int) -> HttpResponse:
-    user = get_object_or_404(User, pk=pk)
+class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = User
+    form_class = CustomUserCreationForm
+    template_name = "users/user_update_form.html"
+    success_message = "Пользователь успешно изменен"
+    success_url = reverse_lazy("user_list")
 
-    # Проверка, является ли текущий пользователь владельцем аккаунта
-    if request.user != user:
-        messages.error(request,
-                       "У вас нет прав для изменения другого пользователя.")
-        return redirect("user_list")
-
-    if request.method == "POST":
-        form = UserForm(request.POST, instance=user)
-        if form.is_valid():
-            user = form.save(commit=False)
-            # Проверка на изменение пароля
-            password1 = form.cleaned_data.get("password1")
-            password_confirm = form.cleaned_data.get("password2")
-            if password1 and password1 == password_confirm:
-                user.set_password(password1)  # Устанавливаем новый пароль
-            user.save()
-            messages.success(request, "Пользователь успешно изменен")
+    def dispatch(self, request, *args, **kwargs):
+        user_to_delete = self.get_object()
+        if user_to_delete != request.user:
+            messages.error(
+                request, "У вас нет прав для изменения другого пользователя."
+            )
             return redirect("user_list")
-    else:
-        form = UserForm(instance=user)
+        return super().dispatch(request, *args, **kwargs)
 
-    return render(request, "users/user_update_form.html", {"form": form})
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        password1 = form.cleaned_data.get("password1")
+        password_confirm = form.cleaned_data.get("password2")
 
+        if password1 and password1 == password_confirm:
+            user.set_password(password1)
 
-def user_delete(request: HttpRequest, pk: int) -> HttpResponse:
-    user = get_object_or_404(User, pk=pk)
-    # Проверка, является ли текущий пользователь владельцем аккаунта
-    if request.user != user:
-        messages.error(request,
-                       "У вас нет прав для изменения другого пользователя.")
-        return redirect("user_list")
+        user.first_name = form.cleaned_data.get("first_name")  # Обновление имени
+        user.last_name = form.cleaned_data.get("last_name")  # Обновление фамилии
+        user.save()
 
-    if request.method == "POST":
-        user.delete()
-        messages.success(request, "Пользователь успешно удален")
-        return redirect("user_list")
-    return render(request, "users/user_confirm_delete.html", {"user": user})
+        return super().form_valid(form)
 
-
-def user_list(request: HttpRequest) -> HttpResponse:
-    users = User.objects.all()
-    return render(request, "users/user_list.html", {"users": users})
+    def form_invalid(self, form):
+        print(form.errors)
+        return super().form_invalid(form)
 
 
-def login_view(request: HttpRequest) -> HttpResponse:
-    if request.method == "POST":
+class UserDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = User
+    template_name = "users/user_confirm_delete.html"
+    success_message = "Пользователь успешно удален"
+    success_url = reverse_lazy("user_list")
+
+    def dispatch(self, request, *args, **kwargs):
+        user_to_delete = self.get_object()
+        if user_to_delete != request.user:
+            messages.error(
+                request, "У вас нет прав для изменения другого пользователя."
+            )
+            return redirect("user_list")
+        return super().dispatch(request, *args, **kwargs)
+
+
+class UserListView(ListView):
+    model = User
+    template_name = "users/user_list.html"
+    context_object_name = "users"
+
+
+class LoginView(TemplateView):
+    template_name = "users/login.html"
+
+    def post(self, request, *args, **kwargs):
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
@@ -79,13 +102,13 @@ def login_view(request: HttpRequest) -> HttpResponse:
             return redirect("index")
         else:
             messages.error(
-                request,
-                "Пожалуйста, введите правильные имя пользователя и пароль"
+                request, "Пожалуйста, введите правильные имя пользователя и пароль"
             )
-    return render(request, "users/login.html")
+        return self.get(request, *args, **kwargs)
 
 
-def logout_view(request: HttpRequest) -> HttpResponse:
-    logout(request)
-    messages.success(request, "Вы разлогинены")
-    return redirect("index")  # Перенаправление на страницу входа
+class LogoutView(TemplateView):
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        messages.success(request, "Вы разлогинены")
+        return redirect("index")

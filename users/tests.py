@@ -36,7 +36,9 @@ class UserTests(TestCase):
         response_invalid = self.client.post(reverse("user_create"), invalid_data)
 
         # Ожидаем, что будет статус 200, если форма не валидна
-        self.assertEqual(response_invalid.status_code, 200)  # Ожидаем 200, если данные неверные
+        self.assertEqual(
+            response_invalid.status_code, 200
+        )  # Ожидаем 200, если данные неверные
 
     def test_user_update(self):
         self.client.force_login(self.user)  # Аутентификация пользователя
@@ -48,10 +50,14 @@ class UserTests(TestCase):
         }
 
         # Проверяем на успешное обновление
-        response = self.client.post(reverse("user_update", args=[self.user.pk]), updated_data)
+        response = self.client.post(
+            reverse("user_update", args=[self.user.pk]), updated_data
+        )
 
         # Ожидаем перенаправление после успешного обновления
-        self.assertEqual(response.status_code, 302)  # Ожидаем 302 после успешного обновления
+        self.assertEqual(
+            response.status_code, 302
+        )  # Ожидаем 302 после успешного обновления
 
         # Проверяем, что пользователь обновлён
         self.user.refresh_from_db()
@@ -67,8 +73,9 @@ class UserTests(TestCase):
             "password1": "NewPassword123",
             "password2": "DifferentPassword123",
         }
-        response_invalid = self.client.post(reverse("user_update",
-                                                    args=[self.user.pk]), invalid_data)
+        response_invalid = self.client.post(
+            reverse("user_update", args=[self.user.pk]), invalid_data
+        )
 
         # Ожидаем 200, если данные неверные
         self.assertEqual(response_invalid.status_code, 200)
