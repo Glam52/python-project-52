@@ -12,6 +12,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import get_user_model, authenticate, login, logout
 from .forms import CustomUserCreationForm
 from django.contrib import messages
+from django.http import HttpResponse, HttpRequest, HttpResponseBase
+from typing import Any
 
 User = get_user_model()
 
@@ -23,10 +25,10 @@ class UserCreateView(SuccessMessageMixin, CreateView):
     success_message = "Пользователь успешно зарегистрирован"
     success_url = reverse_lazy("login")
 
-    def form_valid(self, form):
+    def form_valid(self, form: CustomUserCreationForm) -> HttpResponse:
         return super().form_valid(form)
 
-    def form_invalid(self, form):
+    def form_invalid(self, form: CustomUserCreationForm) -> HttpResponse:
         # Выводим ошибки формы в логах для отладки
         print(form.errors)
         return super().form_invalid(form)
@@ -39,7 +41,7 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_message = "Пользователь успешно изменен"
     success_url = reverse_lazy("user_list")
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         user_to_delete = self.get_object()
         if user_to_delete != request.user:
             messages.error(
@@ -48,7 +50,7 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
             return redirect("user_list")
         return super().dispatch(request, *args, **kwargs)
 
-    def form_valid(self, form):
+    def form_valid(self, form: CustomUserCreationForm) -> HttpResponse:
         user = form.save(commit=False)
         password1 = form.cleaned_data.get("password1")
         password_confirm = form.cleaned_data.get("password2")
@@ -62,7 +64,7 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
         return super().form_valid(form)
 
-    def form_invalid(self, form):
+    def form_invalid(self, form: CustomUserCreationForm) -> HttpResponse:
         print(form.errors)
         return super().form_invalid(form)
 
@@ -73,7 +75,7 @@ class UserDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     success_message = "Пользователь успешно удален"
     success_url = reverse_lazy("user_list")
 
-    def dispatch(self, request, *args, **kwargs):
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         user_to_delete = self.get_object()
         if user_to_delete != request.user:
             messages.error(
@@ -92,7 +94,7 @@ class UserListView(ListView):
 class LoginView(TemplateView):
     template_name = "users/login.html"
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         username = request.POST["username"]
         password = request.POST["password"]
         user = authenticate(request, username=username, password=password)
@@ -108,7 +110,7 @@ class LoginView(TemplateView):
 
 
 class LogoutView(TemplateView):
-    def post(self, request, *args, **kwargs):
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any):
         logout(request)
         messages.success(request, "Вы разлогинены")
         return redirect("index")
