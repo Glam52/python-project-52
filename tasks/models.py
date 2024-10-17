@@ -1,7 +1,13 @@
 from django.db import models
 from django.conf import settings
 from statuses.models import Status
-from django.db.models import CharField, DateTimeField, TextField, ManyToManyField, ForeignKey
+from django.db.models import (
+    CharField,
+    DateTimeField,
+    TextField,
+    ManyToManyField,
+    ForeignKey,
+)
 
 
 class Task(models.Model):
