@@ -90,7 +90,7 @@ class TaskDeleteView(SuccessMessageMixin, DeleteView):
     def dispatch(self, request: HttpRequest, *args, **kwargs):
         self.object = self.get_object()
         if request.user != self.object.author:
-            messages.error(request, "Задачу может удалить только её автор.")
+            messages.error(request, "Задачу может удалить только её автор")
             return redirect("task_list")  # Перенаправление на список задач
         return super().dispatch(request, *args, **kwargs)
 
