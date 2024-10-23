@@ -46,7 +46,8 @@ class StatusDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 
         # Проверка, используется ли статус в задачах
         if Task.objects.filter(status=self.object).exists():
-            messages.error(request, "Невозможно удалить статус, потому что он используется в задачах.")
+            messages.error(request,
+                           "Невозможно удалить статус, потому что он используется в задачах.")
             return redirect(self.success_url)
 
         return super().post(request, *args, **kwargs)
