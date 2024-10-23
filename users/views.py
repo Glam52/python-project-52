@@ -5,11 +5,10 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
     ListView,
-    TemplateView,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth import get_user_model, authenticate, login, logout
+from django.contrib.auth import get_user_model
 from .forms import CustomUserCreationForm
 from django.contrib import messages
 from django.http import HttpResponse, HttpRequest, HttpResponseBase
@@ -109,6 +108,7 @@ class UserLogin(LoginView):
 
 class UserLogout(LogoutView):
     next_page = reverse_lazy('index')
+
     def post(self, request, *args, **kwargs):
         messages.success(request, "Вы разлогинены")
         return super().post(request, *args, **kwargs)
