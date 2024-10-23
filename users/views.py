@@ -14,6 +14,7 @@ from .forms import CustomUserCreationForm
 from django.contrib import messages
 from django.http import HttpResponse, HttpRequest, HttpResponseBase
 from typing import Any
+from django.contrib.auth.views import LoginView, LogoutView
 
 User = get_user_model()
 
@@ -91,26 +92,23 @@ class UserListView(ListView):
     context_object_name = "users"
 
 
-class LoginView(TemplateView):
+class UserLogin(LoginView):
     template_name = "users/login.html"
 
-    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            messages.success(request, "Вы залогинены")
-            return redirect("index")
-        else:
-            messages.error(
-                request, "Пожалуйста, введите правильные имя пользователя и пароль"
-            )
-        return self.get(request, *args, **kwargs)
+    def form_valid(self, form):
+        messages.success(self.request, "Вы залогинены")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('index')
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Пожалуйста, введите правильные имя пользователя и пароль")
+        return super().form_invalid(form)
 
 
-class LogoutView(TemplateView):
-    def post(self, request: HttpRequest, *args: Any, **kwargs: Any):
-        logout(request)
+class UserLogout(LogoutView):
+    next_page = reverse_lazy('index')
+    def post(self, request, *args, **kwargs):
         messages.success(request, "Вы разлогинены")
-        return redirect("index")
+        return super().post(request, *args, **kwargs)
