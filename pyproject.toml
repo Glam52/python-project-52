@@ -28,3 +28,8 @@ django-stubs = "^5.1.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.packages]
+packages = [
+    { include = "python-project-52" }
+]
