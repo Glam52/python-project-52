@@ -4,6 +4,10 @@ version = "0.1.0"
 description = ""
 authors = ["Glam52 <gla_max@outlook.com>"]
 readme = "README.md"
+packages = [
+    { include = "python-project-52" },
+    { include = "task_manager" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -31,5 +35,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.packages]
 packages = [
-    { include = "python-project-52" }
+    { include = "python-project-52" },
+    { include = "task_manager" }
 ]
