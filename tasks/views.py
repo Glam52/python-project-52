@@ -15,7 +15,7 @@ from statuses.models import Status
 from labels.models import Label
 from .forms import TaskForm
 from django.shortcuts import redirect
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
 from typing import Any, Dict
 
 
@@ -52,10 +52,11 @@ class TaskCreateView(SuccessMessageMixin, CreateView):
         return super().form_valid(form)
 
 
-class TaskUpdateView(UpdateView):
+class TaskUpdateView(SuccessMessageMixin, UpdateView):
     model = Task
     form_class = TaskForm
     template_name = "tasks/task_update.html"
+    success_message = "Задача успешно изменена"
     success_url = reverse_lazy("task_list")
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
@@ -64,10 +65,6 @@ class TaskUpdateView(UpdateView):
         context["executors"] = User.objects.all()
         context["labels"] = Label.objects.all()
         return context
-
-    def form_valid(self, form: TaskForm) -> HttpResponse:
-        messages.success(self.request, "Задача успешно изменена")
-        return super().form_valid(form)
 
 
 class TaskDetailView(DetailView):
