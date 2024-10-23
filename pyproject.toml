@@ -5,8 +5,12 @@ description = ""
 authors = ["Glam52 <gla_max@outlook.com>"]
 readme = "README.md"
 packages = [
-    { include = "python-project-52" },
-    { include = "task_manager" }
+    { include = "hexlet_code" },
+    { include = "task_manager" },
+    { include = "labels" },
+    { include = "statuses" },
+    { include = "tasks" },
+    { include = "users" }
 ]
 
 [tool.poetry.dependencies]
