@@ -1,3 +1,4 @@
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse, HttpRequest
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Label
@@ -14,32 +15,27 @@ class LabelListView(ListView):
     context_object_name = "labels"
 
 
-class LabelCreateView(CreateView):
+class LabelCreateView(SuccessMessageMixin, CreateView):
     model = Label
     form_class = LabelForm
     template_name = "labels/label_form.html"
     success_url = reverse_lazy("labels:label_list")
-
-    def form_valid(self, form: LabelForm) -> HttpResponse:
-        messages.success(self.request, "Метка успешно создана")
-        return super().form_valid(form)
+    success_message = "Метка успешно создана"
 
 
-class LabelUpdateView(UpdateView):
+class LabelUpdateView(SuccessMessageMixin, UpdateView):
     model = Label
     form_class = LabelForm
     template_name = "labels/label_update.html"
     success_url = reverse_lazy("labels:label_list")
-
-    def form_valid(self, form: LabelForm) -> HttpResponse:
-        messages.success(self.request, "Метка успешно изменена")
-        return super().form_valid(form)
+    success_message = "Метка успешно создана"
 
 
-class LabelDeleteView(DeleteView):
+class LabelDeleteView(SuccessMessageMixin, DeleteView):
     model = Label
     template_name = "labels/label_confirm_delete.html"
     success_url = reverse_lazy("labels:label_list")
+    success_message = "Метка успешно удалена"
 
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         self.object = self.get_object()
@@ -47,12 +43,10 @@ class LabelDeleteView(DeleteView):
         # Проверка на наличие связанных задач
         if (
             self.object.task_set.exists()
-        ):  # task_set используется для обратной связи через ManyToMany
+        ):
             messages.error(
                 request, "Невозможно удалить метку, потому что она используется"
             )
             return redirect(self.success_url)
 
-        # Удаляем метку, если она не используется
-        messages.success(request, "Метка успешно удалена")
         return self.delete(request, *args, **kwargs)
