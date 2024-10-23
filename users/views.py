@@ -29,8 +29,7 @@ class UserCreateView(SuccessMessageMixin, CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form: CustomUserCreationForm) -> HttpResponse:
-        # Выводим ошибки формы в логах для отладки
-        print(form.errors)
+        # Для отладки ошибок (print(form.errors))
         return super().form_invalid(form)
 
 
@@ -65,7 +64,6 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return super().form_valid(form)
 
     def form_invalid(self, form: CustomUserCreationForm) -> HttpResponse:
-        print(form.errors)
         return super().form_invalid(form)
 
 
