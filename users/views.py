@@ -26,7 +26,6 @@ class UserCreateView(SuccessMessageMixin, CreateView):
     success_url = reverse_lazy("login")
 
 
-
 class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
     form_class = CustomUserCreationForm
@@ -35,30 +34,19 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_url = reverse_lazy("user_list")
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
-        user_to_delete = self.get_object()
-        if user_to_delete != request.user:
-            messages.error(
-                request, "У вас нет прав для изменения другого пользователя."
-            )
+        user_to_update = self.get_object()
+        if user_to_update != request.user:
+            messages.error(request, "У вас нет прав для изменения другого пользователя.")
             return redirect("user_list")
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form: CustomUserCreationForm) -> HttpResponse:
-        user = form.save(commit=False)
+        user = super().form_valid(form)  # Сохраняем пользователя
         password1 = form.cleaned_data.get("password1")
-        password_confirm = form.cleaned_data.get("password2")
-
-        if password1 and password1 == password_confirm:
-            user.set_password(password1)
-
-        user.first_name = form.cleaned_data.get("first_name")  # Обновление имени
-        user.last_name = form.cleaned_data.get("last_name")  # Обновление фамилии
-        user.save()
-
-        return super().form_valid(form)
-
-    def form_invalid(self, form: CustomUserCreationForm) -> HttpResponse:
-        return super().form_invalid(form)
+        if password1:
+            self.object.set_password(password1)  # Устанавливаем пароль
+            self.object.save()  # Сохраняем изменения в объекте
+        return user
 
 
 class UserDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
