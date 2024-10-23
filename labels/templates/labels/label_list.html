@@ -49,10 +49,7 @@
     <div class="container wrapper flex-grow-1">
         {% if messages %}
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">{{ message }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>
             {% endfor %}
         {% endif %}
     <h1 class="my-4">Метки</h1>

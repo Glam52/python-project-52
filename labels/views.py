@@ -28,7 +28,7 @@ class LabelUpdateView(SuccessMessageMixin, UpdateView):
     form_class = LabelForm
     template_name = "labels/label_update.html"
     success_url = reverse_lazy("labels:label_list")
-    success_message = "Метка успешно создана"
+    success_message = "Метка успешно изменена"
 
 
 class LabelDeleteView(SuccessMessageMixin, DeleteView):
