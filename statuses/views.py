@@ -32,7 +32,7 @@ class StatusUpdateView(SuccessMessageMixin, UpdateView):
     success_message = "Статус успешно изменен"
 
 
-class StatusDeleteView(SuccessMessageMixin, DeleteView):
+class StatusDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Status
     template_name = "statuses/status_confirm_delete.html"
     success_url = reverse_lazy("statuses:list")
