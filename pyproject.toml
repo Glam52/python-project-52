@@ -5,6 +5,7 @@ description = ""
 authors = ["Glam52 <gla_max@outlook.com>"]
 readme = "README.md"
 packages = [
+    { include = "python-project-52"},
     { include = "hexlet_code" },
     { include = "task_manager" },
     { include = "labels" },
