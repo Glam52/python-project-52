@@ -80,6 +80,7 @@ class UserDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
                 request, "У вас нет прав для изменения другого пользователя."
             )
             return redirect("user_list")
+
         return super().dispatch(request, *args, **kwargs)
 
 

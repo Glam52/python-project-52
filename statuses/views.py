@@ -32,18 +32,18 @@ class StatusUpdateView(SuccessMessageMixin, UpdateView):
     success_message = "Статус успешно изменен"
 
 
-class StatusDeleteView(DeleteView):
+class StatusDeleteView(SuccessMessageMixin, DeleteView):
     model = Status
     template_name = "statuses/status_confirm_delete.html"
     success_url = reverse_lazy("statuses:list")
+    success_message = "Статус успешно удален"
 
     def dispatch(self, request, *args, **kwargs):
         self.object = self.get_object()
 
         # Проверка, используется ли статус в задачах
         if Task.objects.filter(status=self.object).exists():
-            messages.error(request,
-                           "Невозможно удалить статус, потому что он используется в задачах.")
+            messages.error(request, "Невозможно удалить статус, потому что он используется в задачах.")
             return redirect(self.success_url)
 
         return super().dispatch(request, *args, **kwargs)
