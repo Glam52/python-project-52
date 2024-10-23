@@ -92,5 +92,4 @@ class TaskDeleteView(SuccessMessageMixin, DeleteView):
         if request.user != self.object.author:
             messages.error(request, "Задачу может удалить только ее автор")
             return redirect("task_list")  # Перенаправление на список задач
-
         return super().dispatch(request, *args, **kwargs)
