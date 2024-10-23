@@ -39,6 +39,9 @@ class StatusDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     success_message = "Статус успешно удален"
 
     def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
         # Проверка, используется ли статус в задачах
@@ -46,4 +49,4 @@ class StatusDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
             messages.error(request, "Невозможно удалить статус, потому что он используется в задачах.")
             return redirect(self.success_url)
 
-        return super().dispatch(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
