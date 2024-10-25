@@ -11,36 +11,35 @@ from typing import Any
 
 class LabelListView(ListView):
     model = Label
-    template_name = "labels/label_list.html"
-    context_object_name = "labels"
+    template_name: str = "labels/label_list.html"
+    context_object_name: str = "labels"
 
 
 class LabelCreateView(SuccessMessageMixin, CreateView):
     model = Label
     form_class = LabelForm
-    template_name = "labels/label_form.html"
-    success_url = reverse_lazy("labels:label_list")
-    success_message = "Метка успешно создана"
+    template_name: str = "labels/label_form.html"
+    success_url: str = reverse_lazy("labels:label_list")
+    success_message: str = "Метка успешно создана"
 
 
 class LabelUpdateView(SuccessMessageMixin, UpdateView):
     model = Label
     form_class = LabelForm
-    template_name = "labels/label_update.html"
-    success_url = reverse_lazy("labels:label_list")
-    success_message = "Метка успешно изменена"
+    template_name: str = "labels/label_update.html"
+    success_url: str = reverse_lazy("labels:label_list")
+    success_message: str = "Метка успешно изменена"
 
 
 class LabelDeleteView(SuccessMessageMixin, DeleteView):
     model = Label
-    template_name = "labels/label_confirm_delete.html"
-    success_url = reverse_lazy("labels:label_list")
-    success_message = "Метка успешно удалена"
+    template_name: str = "labels/label_confirm_delete.html"
+    success_url: str = reverse_lazy("labels:label_list")
+    success_message: str = "Метка успешно удалена"
 
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        self.object = self.get_object()
+        self.object: Any = self.get_object()
 
-        # Проверка на наличие связанных задач
         if self.object.task_set.exists():
             messages.error(
                 request, "Невозможно удалить метку, потому что она используется"
