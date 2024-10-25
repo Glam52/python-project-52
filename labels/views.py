@@ -6,33 +6,33 @@ from .forms import LabelForm
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.shortcuts import redirect
-from typing import Any
+from typing import Any, Type
 
 
 class LabelListView(ListView):
-    model = Label
+    model: Type[Label] = Label
     template_name: str = "labels/label_list.html"
     context_object_name: str = "labels"
 
 
 class LabelCreateView(SuccessMessageMixin, CreateView):
-    model = Label
-    form_class = LabelForm
+    model: Type[Label] = Label
+    form_class: Type[LabelForm] = LabelForm
     template_name: str = "labels/label_form.html"
     success_url: str = reverse_lazy("labels:label_list")
     success_message: str = "Метка успешно создана"
 
 
 class LabelUpdateView(SuccessMessageMixin, UpdateView):
-    model = Label
-    form_class = LabelForm
+    model: Type[Label] = Label
+    form_class: Type[LabelForm] = LabelForm
     template_name: str = "labels/label_update.html"
     success_url: str = reverse_lazy("labels:label_list")
     success_message: str = "Метка успешно изменена"
 
 
 class LabelDeleteView(SuccessMessageMixin, DeleteView):
-    model = Label
+    model: Type[Label] = Label
     template_name: str = "labels/label_confirm_delete.html"
     success_url: str = reverse_lazy("labels:label_list")
     success_message: str = "Метка успешно удалена"
