@@ -44,8 +44,8 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         user = super().form_valid(form)  # Сохраняем пользователя
         password1 = form.cleaned_data.get("password1")
         if password1:
-            self.object.set_password(password1)  # Устанавливаем пароль
-            self.object.save()  # Сохраняем изменения в объекте
+            self.object.set_password(password1)
+            self.object.save()
         return user
 
 
@@ -72,15 +72,10 @@ class UserListView(ListView):
     context_object_name = "users"
 
 
-class UserLogin(LoginView):
+class UserLogin(SuccessMessageMixin, LoginView):
     template_name = "users/login.html"
-
-    def form_valid(self, form):
-        messages.success(self.request, "Вы залогинены")
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse_lazy('index')
+    success_message = "Вы залогинены"
+    success_url = reverse_lazy("index")
 
     def form_invalid(self, form):
         messages.error(self.request, "Пожалуйста, введите правильные имя пользователя и пароль")

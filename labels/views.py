@@ -41,9 +41,7 @@ class LabelDeleteView(SuccessMessageMixin, DeleteView):
         self.object = self.get_object()
 
         # Проверка на наличие связанных задач
-        if (
-            self.object.task_set.exists()
-        ):
+        if self.object.task_set.exists():
             messages.error(
                 request, "Невозможно удалить метку, потому что она используется"
             )

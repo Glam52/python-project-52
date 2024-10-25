@@ -38,13 +38,9 @@ class StatusDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     success_url = reverse_lazy("statuses:list")
     success_message = "Статус успешно удален"
 
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        # Проверка, используется ли статус в задачах
         if Task.objects.filter(status=self.object).exists():
             messages.error(request,
                            "Невозможно удалить статус, потому что он используется в задачах.")
