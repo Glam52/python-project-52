@@ -21,17 +21,17 @@ User = get_user_model()
 class UserCreateView(SuccessMessageMixin, CreateView):
     model = User
     form_class = CustomUserCreationForm
-    template_name = "users/user_form.html"
-    success_message = "Пользователь успешно зарегистрирован"
-    success_url = reverse_lazy("login")
+    template_name: str = "users/user_form.html"
+    success_message: str = "Пользователь успешно зарегистрирован"
+    success_url: str = reverse_lazy("login")
 
 
 class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
     form_class = CustomUserCreationForm
-    template_name = "users/user_update_form.html"
-    success_message = "Пользователь успешно изменен"
-    success_url = reverse_lazy("user_list")
+    template_name: str = "users/user_update_form.html"
+    success_message: str = "Пользователь успешно изменен"
+    success_url: str = reverse_lazy("user_list")
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         user_to_update = self.get_object()
@@ -41,7 +41,7 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form: CustomUserCreationForm) -> HttpResponse:
-        user = super().form_valid(form)  # Сохраняем пользователя
+        user = super().form_valid(form)
         password1 = form.cleaned_data.get("password1")
         if password1:
             self.object.set_password(password1)
@@ -51,9 +51,9 @@ class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
 class UserDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = User
-    template_name = "users/user_confirm_delete.html"
-    success_message = "Пользователь успешно удален"
-    success_url = reverse_lazy("user_list")
+    template_name: str = "users/user_confirm_delete.html"
+    success_message: str = "Пользователь успешно удален"
+    success_url: str = reverse_lazy("user_list")
 
     def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
         user_to_delete = self.get_object()
@@ -68,8 +68,8 @@ class UserDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
 
 class UserListView(ListView):
     model = User
-    template_name = "users/user_list.html"
-    context_object_name = "users"
+    template_name: str = "users/user_list.html"
+    context_object_name: str = "users"
 
 
 class UserLogin(SuccessMessageMixin, LoginView):

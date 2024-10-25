@@ -9,33 +9,33 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpRequest
-from typing import Any, Type
+from typing import Any
 
 
 class StatusListView(LoginRequiredMixin, ListView):
-    model: Type[Status] = Status
+    model = Status
     template_name: str = "statuses/status_list.html"
     context_object_name: str = "statuses"
 
 
 class StatusCreateView(SuccessMessageMixin, CreateView):
-    model: Type[Status] = Status
-    form_class: Type[StatusForm] = StatusForm
+    model = Status
+    form_class = StatusForm
     template_name: str = "statuses/status_form.html"
     success_url: str = reverse_lazy("statuses:list")
     success_message: str = "Статус успешно создан"
 
 
 class StatusUpdateView(SuccessMessageMixin, UpdateView):
-    model: Type[Status] = Status
-    form_class: Type[StatusForm] = StatusForm
+    model = Status
+    form_class = StatusForm
     template_name: str = "statuses/status_update.html"
     success_url: str = reverse_lazy("statuses:list")
     success_message: str = "Статус успешно изменен"
 
 
 class StatusDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
-    model: Type[Status] = Status
+    model = Status
     template_name: str = "statuses/status_confirm_delete.html"
     success_url: str = reverse_lazy("statuses:list")
     success_message: str = "Статус успешно удален"

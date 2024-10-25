@@ -12,4 +12,4 @@ class TaskFilter(FilterSet):
 
     class Meta:
         model = Task
-        fields = []
+        fields: list = []

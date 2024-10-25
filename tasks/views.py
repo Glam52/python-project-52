@@ -20,7 +20,7 @@ from typing import Any, Dict, Type
 
 
 class TaskListView(FilterView):
-    model: Type[Task] = Task
+    model = Task
     template_name: str = "tasks/task_list.html"
     context_object_name: str = "tasks"
     filterset_class: Type[TaskFilter] = TaskFilter
@@ -34,8 +34,8 @@ class TaskListView(FilterView):
 
 
 class TaskCreateView(SuccessMessageMixin, CreateView):
-    model: Type[Task] = Task
-    form_class: Type[TaskForm] = TaskForm
+    model = Task
+    form_class = TaskForm
     template_name: str = "tasks/task_form.html"
     success_message: str = "Задача успешно создана"
     success_url: str = reverse_lazy("task_list")
@@ -53,8 +53,8 @@ class TaskCreateView(SuccessMessageMixin, CreateView):
 
 
 class TaskUpdateView(SuccessMessageMixin, UpdateView):
-    model: Type[Task] = Task
-    form_class: Type[TaskForm] = TaskForm
+    model = Task
+    form_class = TaskForm
     template_name: str = "tasks/task_update.html"
     success_message: str = "Задача успешно изменена"
     success_url: str = reverse_lazy("task_list")
@@ -68,7 +68,7 @@ class TaskUpdateView(SuccessMessageMixin, UpdateView):
 
 
 class TaskDetailView(DetailView):
-    model: Type[Task] = Task
+    model = Task
     template_name: str = "tasks/task_detail.html"
     context_object_name: str = "task"
 
@@ -79,7 +79,7 @@ class TaskDetailView(DetailView):
 
 
 class TaskDeleteView(SuccessMessageMixin, DeleteView):
-    model: Type[Task] = Task
+    model = Task
     template_name: str = "tasks/task_confirm_delete.html"
     success_url: str = reverse_lazy("task_list")
     success_message: str = "Задача успешно удалена"
