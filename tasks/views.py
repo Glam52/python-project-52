@@ -15,15 +15,15 @@ from statuses.models import Status
 from labels.models import Label
 from .forms import TaskForm
 from django.shortcuts import redirect
-from django.http import HttpRequest
-from typing import Any, Dict
+from django.http import HttpRequest, HttpResponseBase
+from typing import Any, Dict, Type
 
 
 class TaskListView(FilterView):
-    model = Task
-    template_name = "tasks/task_list.html"
-    context_object_name = "tasks"
-    filterset_class = TaskFilter
+    model: Type[Task] = Task
+    template_name: str = "tasks/task_list.html"
+    context_object_name: str = "tasks"
+    filterset_class: Type[TaskFilter] = TaskFilter
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -34,11 +34,11 @@ class TaskListView(FilterView):
 
 
 class TaskCreateView(SuccessMessageMixin, CreateView):
-    model = Task
-    form_class = TaskForm
-    template_name = "tasks/task_form.html"
-    success_message = "Задача успешно создана"
-    success_url = reverse_lazy("task_list")
+    model: Type[Task] = Task
+    form_class: Type[TaskForm] = TaskForm
+    template_name: str = "tasks/task_form.html"
+    success_message: str = "Задача успешно создана"
+    success_url: str = reverse_lazy("task_list")
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -53,11 +53,11 @@ class TaskCreateView(SuccessMessageMixin, CreateView):
 
 
 class TaskUpdateView(SuccessMessageMixin, UpdateView):
-    model = Task
-    form_class = TaskForm
-    template_name = "tasks/task_update.html"
-    success_message = "Задача успешно изменена"
-    success_url = reverse_lazy("task_list")
+    model: Type[Task] = Task
+    form_class: Type[TaskForm] = TaskForm
+    template_name: str = "tasks/task_update.html"
+    success_message: str = "Задача успешно изменена"
+    success_url: str = reverse_lazy("task_list")
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -68,9 +68,9 @@ class TaskUpdateView(SuccessMessageMixin, UpdateView):
 
 
 class TaskDetailView(DetailView):
-    model = Task
-    template_name = "tasks/task_detail.html"
-    context_object_name = "task"
+    model: Type[Task] = Task
+    template_name: str = "tasks/task_detail.html"
+    context_object_name: str = "task"
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -79,13 +79,13 @@ class TaskDetailView(DetailView):
 
 
 class TaskDeleteView(SuccessMessageMixin, DeleteView):
-    model = Task
-    template_name = "tasks/task_confirm_delete.html"
-    success_url = reverse_lazy("task_list")
-    success_message = "Задача успешно удалена"
+    model: Type[Task] = Task
+    template_name: str = "tasks/task_confirm_delete.html"
+    success_url: str = reverse_lazy("task_list")
+    success_message: str = "Задача успешно удалена"
 
-    def dispatch(self, request: HttpRequest, *args, **kwargs):
-        self.object = self.get_object()
+    def dispatch(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponseBase:
+        self.object: Any = self.get_object()
         if request.user != self.object.author:
             messages.error(request, "Задачу может удалить только ее автор")
             return redirect("task_list")  # Перенаправление на список задач
